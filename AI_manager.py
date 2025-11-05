@@ -167,11 +167,11 @@ class AIManager(QObject):
             self.current_request_id = request_id
             print(f"创建新的AI请求，ID: {request_id}")
             
-            # 确保有论文上下文(如果必要)
+            # 确保有课本上下文(如果必要)
             if not paper_id and self.data_manager and self.data_manager.current_paper:
                 paper_id = self.data_manager.current_paper.get('id')
                 
-            # 获取论文数据并设置上下文
+            # 获取课本数据并设置上下文
             if paper_id and self.data_manager:
                 paper_data = self.data_manager.load_rag_tree(paper_id)
                 if paper_data:
@@ -380,22 +380,22 @@ class AIManager(QObject):
     def _on_retriever_loaded(self, success):
         """处理检索器加载完成事件"""
         if success:
-            print(f"[INFO] RAG检索器加载完成，共加载了 {len(self.retriever.paper_vector_paths)} 篇论文的向量库索引")
+            print(f"[INFO] RAG检索器加载完成，共加载了 {len(self.retriever.paper_vector_paths)} 本课本的向量库索引")
             
             # 可以添加额外验证代码
             for paper_id, path in self.retriever.paper_vector_paths.items():
                 if not os.path.exists(path):
-                    print(f"[WARNING] 论文 {paper_id} 的向量库路径不存在: {path}")
+                    print(f"[WARNING] 课本 {paper_id} 的向量库路径不存在: {path}")
         else:
-            print("[ERROR] RAG检索器加载失败或没有找到论文")
+            print("[ERROR] RAG检索器加载失败或没有找到课本")
 
     def add_paper_vector_store(self, paper_id, vector_store_path):
-        """添加新论文的向量库
-        
-        在处理完新论文后调用此方法
-        
+        """添加新课本的向量库
+
+        在处理完新课本后调用此方法
+
         Args:
-            paper_id: 论文ID
+            paper_id: 课本ID
             vector_store_path: 向量库路径
             
         Returns:

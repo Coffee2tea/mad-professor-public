@@ -40,8 +40,8 @@ class UploadWidget(QWidget):
         # 设置样式
         self.setStyleSheet("""
             #uploadWidget {
-                background-color: #e8eaf6;
-                border-top: 1px solid #c5cae9;
+                background-color: #FFF3E0;
+                border-top: 1px solid rgba(255, 183, 77, 0.4);
             }
         """)
         
@@ -51,7 +51,8 @@ class UploadWidget(QWidget):
         upload_button_frame.setObjectName("uploadButtonFrame")
         upload_button_frame.setStyleSheet("""
             #uploadButtonFrame {
-                background-color: #3f51b5;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                               stop:0 #FFB74D, stop:1 #FF8A65);
                 color: white;
             }
         """)
@@ -61,13 +62,13 @@ class UploadWidget(QWidget):
         upload_button_layout.setContentsMargins(10, 0, 10, 0)
         
         # 上传按钮标题
-        self.upload_title = QLabel("上传论文")
+        self.upload_title = QLabel("导入课本")
         self.upload_title.setFont(QFont("Source Han Sans SC", 11, QFont.Weight.Bold))
         self.upload_title.setStyleSheet("color: white; font-weight: bold;")
         
         # 上传按钮
-        self.upload_button = QPushButton("📄")
-        self.upload_button.setToolTip("上传论文文件")
+        self.upload_button = QPushButton("📚")
+        self.upload_button.setToolTip("导入新的法语课本")
         self.upload_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.upload_button.setStyleSheet("""
             QPushButton {
@@ -116,8 +117,8 @@ class UploadWidget(QWidget):
         upload_details.setObjectName("uploadDetails")
         upload_details.setStyleSheet("""
             #uploadDetails {
-                background-color: #f5f5f5;
-                border-top: 1px solid #e0e0e0;
+                background-color: rgba(255, 248, 225, 0.8);
+                border-top: 1px solid rgba(255, 183, 77, 0.3);
             }
         """)
         upload_details.setVisible(False)  # 默认隐藏
@@ -128,10 +129,10 @@ class UploadWidget(QWidget):
         
         # 当前处理文件
         current_file_layout = QHBoxLayout()
-        current_file_label = QLabel("当前文件:")
+        current_file_label = QLabel("当前课本:")
         current_file_label.setStyleSheet("font-weight: bold;")
         self.current_file_name = QLabel("无")
-        self.current_file_name.setStyleSheet("color: #1a237e;")
+        self.current_file_name.setStyleSheet("color: #E65100;")
         current_file_layout.addWidget(current_file_label)
         current_file_layout.addWidget(self.current_file_name)
         
@@ -140,7 +141,7 @@ class UploadWidget(QWidget):
         stage_label = QLabel("处理阶段:")
         stage_label.setStyleSheet("font-weight: bold;")
         self.stage_name = QLabel("无")
-        self.stage_name.setStyleSheet("color: #1a237e;")
+        self.stage_name.setStyleSheet("color: #E65100;")
         stage_layout.addWidget(stage_label)
         stage_layout.addWidget(self.stage_name)
         
@@ -151,15 +152,15 @@ class UploadWidget(QWidget):
         self.progress_bar = QProgressBar()
         self.progress_bar.setStyleSheet("""
             QProgressBar {
-                border: 1px solid #c5cae9;
+                border: 1px solid rgba(255, 183, 77, 0.4);
                 border-radius: 5px;
                 text-align: center;
-                background-color: #e8eaf6;
+                background-color: rgba(255, 236, 179, 0.7);
                 height: 20px;
             }
             QProgressBar::chunk {
-                background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                               stop:0 #1a237e, stop:1 #3f51b5);
+                background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                               stop:0 #FFB74D, stop:1 #FF8A65);
                 border-radius: 5px;
             }
         """)
@@ -168,10 +169,10 @@ class UploadWidget(QWidget):
         
         # 待处理文件
         pending_layout = QHBoxLayout()
-        pending_label = QLabel("待处理文件:")
+        pending_label = QLabel("待处理课本:")
         pending_label.setStyleSheet("font-weight: bold;")
         self.pending_count = QLabel("0")
-        self.pending_count.setStyleSheet("color: #1a237e;")
+        self.pending_count.setStyleSheet("color: #E65100;")
         pending_layout.addWidget(pending_label)
         pending_layout.addWidget(self.pending_count)
         
@@ -181,7 +182,7 @@ class UploadWidget(QWidget):
         self.pause_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.pause_button.setStyleSheet("""
             QPushButton {
-                background-color: #ff9800;
+                background-color: #FFB74D;
                 color: white;
                 border: none;
                 border-radius: 5px;
@@ -189,7 +190,7 @@ class UploadWidget(QWidget):
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #f57c00;
+                background-color: #FFA726;
             }
             QPushButton:disabled {
                 background-color: #bdbdbd;
@@ -264,8 +265,8 @@ class UploadWidget(QWidget):
         """显示文件选择对话框"""
         options = QFileDialog.Option.ReadOnly
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "选择要上传的论文PDF文件", "",
-            "PDF 文件 (*.pdf)", options=options
+            self, "选择要导入的课本文件", "",
+            "PDF 文件 (*.pdf);;Markdown 文件 (*.md *.markdown);;所有文件 (*.*)", options=options
         )
         if file_path:
             # 发送上传文件信号

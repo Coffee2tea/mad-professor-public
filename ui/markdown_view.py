@@ -64,80 +64,80 @@ class MarkdownView(QWebEngineView):
             
             body {
                 font-family: 'Source Han Serif CN', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-                line-height: 1.6;
-                color: #333;
+                line-height: 1.65;
+                color: #5D4037;
                 max-width: 100%;
-                padding: 0 20px;
+                padding: 0 24px;
                 margin: 0 auto;
-                background-color: #fafafa;
-                border-radius: 10px;
+                background-color: #FFF8E1;
+                border-radius: 16px;
             }
-            
-            /* 添加科技感的样式 */
+
             h1 {
-                color: #1a237e;
-                border-bottom: 2px solid #3949ab;
+                color: #E65100;
+                border-bottom: 2px solid rgba(255, 152, 0, 0.6);
                 padding-bottom: 0.2em;
                 margin-top: 1.5em;
                 font-weight: bold;
                 position: relative;
             }
-            
+
             h1:after {
                 content: "";
                 position: absolute;
                 bottom: -2px;
                 left: 0;
-                width: 50px;
-                height: 2px;
-                background: linear-gradient(90deg, #3949ab, #1a237e);
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, #FFB74D, #FF8A65);
+                border-radius: 2px;
             }
-            
+
             h2 {
-                color: #283593;
-                border-bottom: 1px solid #5c6bc0;
+                color: #FB8C00;
+                border-bottom: 1px dashed rgba(255, 152, 0, 0.5);
                 padding-bottom: 0.2em;
             }
-            
+
             h3 {
-                color: #303f9f;
+                color: #FF7043;
             }
-            
+
             a {
-                color: #3949ab;
+                color: #FF8A65;
                 text-decoration: none;
-                border-bottom: 1px dotted #3949ab;
+                border-bottom: 1px dotted rgba(255, 138, 101, 0.6);
                 transition: all 0.3s ease;
             }
-            
+
             a:hover {
-                color: #5c6bc0;
-                border-bottom: 1px solid #5c6bc0;
+                color: #FF7043;
+                border-bottom: 1px solid rgba(255, 112, 67, 0.8);
             }
-            
+
             pre {
-                background-color: #e8eaf6;
-                border-left: 4px solid #3949ab;
+                background-color: rgba(255, 236, 179, 0.7);
+                border-left: 4px solid rgba(255, 152, 0, 0.7);
                 padding: 1em;
                 overflow-x: auto;
-                border-radius: 8px;
+                border-radius: 10px;
             }
-            
+
             code {
                 font-family: Consolas, Monaco, 'Andale Mono', monospace;
-                background-color: #e8eaf6;
+                background-color: rgba(255, 224, 178, 0.8);
                 padding: 0.2em 0.4em;
                 border-radius: 4px;
-                color: #283593;
+                color: #E64A19;
             }
-            
+
             blockquote {
-                border-left: 4px solid #5c6bc0;
+                border-left: 4px solid rgba(255, 138, 101, 0.7);
                 padding: 0.5em 1em;
                 margin-left: 0;
-                background-color: #e8eaf6;
-                color: #3949ab;
-                border-radius: 6px;
+                background-color: rgba(255, 243, 224, 0.8);
+                color: #6D4C41;
+                border-radius: 8px;
             }
             
             table {
@@ -150,19 +150,19 @@ class MarkdownView(QWebEngineView):
             }
             
             table th {
-                background-color: #3949ab;
-                color: white;
+                background-color: rgba(255, 183, 77, 0.85);
+                color: #4E342E;
                 padding: 0.5em;
                 text-align: left;
             }
-            
+
             table td {
                 padding: 0.5em;
-                border-bottom: 1px solid #c5cae9;
+                border-bottom: 1px solid rgba(255, 183, 77, 0.3);
             }
-            
+
             table tr:nth-child(even) {
-                background-color: #e8eaf6;
+                background-color: rgba(255, 236, 179, 0.8);
             }
             
             img {
@@ -605,7 +605,7 @@ class MarkdownView(QWebEngineView):
         """
         切换显示语言并同步阅读位置
         """
-        # 如果数据管理器存在且已加载论文
+        # 如果数据管理器存在且已加载课本
         if hasattr(self, 'data_manager') and self.data_manager and self.data_manager.current_paper:
             # 获取当前第一个可见元素的内容、类型
             element_text, element_type = self._extract_first_visible_element()
@@ -628,7 +628,7 @@ class MarkdownView(QWebEngineView):
                     self.page().loadFinished.connect(
                         lambda ok: self._scroll_to_matching_content(target_content, element_type) if ok else None)
         else:
-            # 如果不是在查看论文，简单切换语言
+            # 如果不是在查看课本，简单切换语言
             self.current_lang = "en" if self.current_lang == "zh" else "zh"
             self._render_markdown()
         

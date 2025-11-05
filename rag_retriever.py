@@ -21,7 +21,7 @@ class VectorLoadingThread(QThread):
             # 构建索引文件路径
             index_path = Path(self.base_path) / "papers_index.json"
             if not index_path.exists():
-                print(f"[WARNING] 论文索引不存在: {index_path}")
+                print(f"[WARNING] 课本索引不存在: {index_path}")
                 self.loading_finished.emit({})
                 return
                 
@@ -29,23 +29,23 @@ class VectorLoadingThread(QThread):
             with open(index_path, 'r', encoding='utf-8') as f:
                 papers_index = json.load(f)
                 
-            # 遍历所有论文，记录其向量库路径
+            # 遍历所有课本，记录其向量库路径
             for paper in papers_index:
                 paper_id = paper.get('id')
                 vector_store_path = paper.get('paths', {}).get('rag_vector_store')
                 
                 if paper_id and vector_store_path:
-                    # 存储论文ID和向量库路径的映射
+                    # 存储课本ID和向量库路径的映射
                     full_path = str(Path(self.base_path) / vector_store_path)
                     paper_vector_paths[paper_id] = full_path
                     
-            print(f"[INFO] 预加载了 {len(paper_vector_paths)} 篇论文的向量库路径")
+            print(f"[INFO] 预加载了 {len(paper_vector_paths)} 本课本的向量库路径")
             
             # 发出加载完成信号
             self.loading_finished.emit(paper_vector_paths)
             
         except Exception as e:
-            print(f"[ERROR] 预加载论文索引失败: {str(e)}")
+            print(f"[ERROR] 预加载课本索引失败: {str(e)}")
             self.loading_finished.emit({})
 
 
@@ -56,31 +56,31 @@ class RagRetriever(QObject):
     
     def __init__(self, base_path=None):
         """
-        初始化RAG检索器并预加载所有论文的向量库路径
+        初始化RAG检索器并预加载所有课本的向量库路径
         
         Args:
-            base_path: 基础路径，如果提供则自动预加载所有论文
+            base_path: 基础路径，如果提供则自动预加载所有课本
         """
         super().__init__()
         self.vector_stores = {}  # 缓存加载过的向量库: {paper_id: vector_store}
-        self.paper_vector_paths = {}  # 论文ID到向量库路径的映射: {paper_id: vector_path}
+        self.paper_vector_paths = {}  # 课本ID到向量库路径的映射: {paper_id: vector_path}
         self.base_path = base_path
         self.loading_thread = None
         self.rag_trees = {}  # 缓存加载过的rag_tree: {paper_id: rag_tree}
         
-        # 如果提供了base_path，则预加载所有论文的索引
+        # 如果提供了base_path，则预加载所有课本的索引
         if base_path:
             self.preload_all_papers(base_path)
 
     def preload_all_papers(self, base_path):
         """
-        在后台线程中预加载所有论文的索引和向量库路径
+        在后台线程中预加载所有课本的索引和向量库路径
         
         Args:
             base_path: 基础路径
         """
         self.base_path = base_path
-        print(f"[INFO] 开始在后台加载论文向量库索引: {base_path}")
+        print(f"[INFO] 开始在后台加载课本向量库索引: {base_path}")
         
         # 创建并启动加载线程
         self.loading_thread = VectorLoadingThread(base_path)
@@ -90,36 +90,36 @@ class RagRetriever(QObject):
     def _on_loading_finished(self, paper_vector_paths):
         """处理向量库路径加载完成的回调"""
         self.paper_vector_paths = paper_vector_paths
-        print(f"[INFO] 完成论文向量库索引加载，共加载 {len(paper_vector_paths)} 个论文索引")
+        print(f"[INFO] 完成课本向量库索引加载，共加载 {len(paper_vector_paths)} 个课本索引")
         self.loading_complete.emit(len(paper_vector_paths) > 0)
 
     def add_paper(self, paper_id: str, vector_store_path: str) -> bool:
         """
-        添加新论文的向量库路径并尝试加载
+        添加新课本的向量库路径并尝试加载
         
         Args:
-            paper_id: 论文ID
+            paper_id: 课本ID
             vector_store_path: 向量库路径
             
         Returns:
             bool: 添加成功返回True，否则返回False
         """
         try:
-            # 添加论文ID和向量库路径的映射
+            # 添加课本ID和向量库路径的映射
             self.paper_vector_paths[paper_id] = vector_store_path
-            print(f"[INFO] 添加新论文向量库: {paper_id} -> {vector_store_path}")
+            print(f"[INFO] 添加新课本向量库: {paper_id} -> {vector_store_path}")
             
             # 尝试加载向量库
             vector_store = self.load_vector_store(vector_store_path)
             if vector_store:
                 self.vector_stores[paper_id] = vector_store
-                print(f"[INFO] 成功加载新论文 {paper_id} 的向量库")
+                print(f"[INFO] 成功加载新课本 {paper_id} 的向量库")
                 return True
             else:
-                print(f"[WARNING] 无法加载新论文 {paper_id} 的向量库")
+                print(f"[WARNING] 无法加载新课本 {paper_id} 的向量库")
                 return False
         except Exception as e:
-            print(f"[ERROR] 添加新论文 {paper_id} 失败: {str(e)}")
+            print(f"[ERROR] 添加新课本 {paper_id} 失败: {str(e)}")
             return False
 
     def load_vector_store(self, vector_store_path: str) -> Optional[FAISS]:
@@ -159,13 +159,13 @@ class RagRetriever(QObject):
             
     def load_rag_tree(self, paper_id: str) -> Dict:
         """
-        加载论文的rag_tree
-        
+        加载课本的rag_tree
+
         Args:
-            paper_id: 论文ID
-            
+            paper_id: 课本ID
+
         Returns:
-            Dict: 论文的rag_tree结构
+            Dict: 课本的rag_tree结构
         """
         if paper_id in self.rag_trees:
             return self.rag_trees[paper_id]
@@ -179,14 +179,14 @@ class RagRetriever(QObject):
             # 从索引文件查找rag_tree路径
             index_path = Path(self.base_path) / "papers_index.json"
             if not index_path.exists():
-                print(f"[ERROR] 论文索引不存在: {index_path}")
+                print(f"[ERROR] 课本索引不存在: {index_path}")
                 return {}
                 
             # 加载索引
             with open(index_path, 'r', encoding='utf-8') as f:
                 papers_index = json.load(f)
             
-            # 查找论文
+            # 查找课本
             rag_tree_path = None
             for paper in papers_index:
                 if paper.get('id') == paper_id:
@@ -194,7 +194,7 @@ class RagRetriever(QObject):
                     break
             
             if not rag_tree_path:
-                print(f"[ERROR] 未找到论文 {paper_id} 的rag_tree路径")
+                print(f"[ERROR] 未找到课本 {paper_id} 的rag_tree路径")
                 return {}
                 
             # 加载rag_tree
@@ -208,7 +208,7 @@ class RagRetriever(QObject):
                 
             # 缓存rag_tree
             self.rag_trees[paper_id] = rag_tree
-            print(f"[INFO] 成功加载论文 {paper_id} 的rag_tree")
+            print(f"[INFO] 成功加载课本 {paper_id} 的rag_tree")
             return rag_tree
             
         except Exception as e:
@@ -217,17 +217,17 @@ class RagRetriever(QObject):
 
     def retrieve(self, query: str, paper_id: str, top_k: int = 5) -> List[Tuple[str, float]]:
         """
-        从指定论文的向量库中检索相关内容
-        
+        从指定课本的向量库中检索相关内容
+
         Args:
             query: 查询文本
-            paper_id: 论文ID
+            paper_id: 课本ID
             top_k: 返回结果数量
             
         Returns:
             List[Tuple[str, float]]: 检索结果列表，每个元素为(文本内容, 分数)
         """
-        # 获取该论文的向量库
+        # 获取该课本的向量库
         vector_store = None
         
         # 检查是否已加载
@@ -242,7 +242,7 @@ class RagRetriever(QObject):
                     self.vector_stores[paper_id] = vector_store
         
         if not vector_store:
-            print(f"[WARNING] 未能获取论文 {paper_id} 的向量库")
+            print(f"[WARNING] 未能获取课本 {paper_id} 的向量库")
             return []
             
         try:
@@ -255,7 +255,7 @@ class RagRetriever(QObject):
             # 格式化结果
             results = [(doc.page_content, score) for doc, score in docs_with_scores]
             
-            print(f"[INFO] 从论文 {paper_id} 检索到 {len(results)} 条结果")
+            print(f"[INFO] 从课本 {paper_id} 检索到 {len(results)} 条结果")
             return results
         except Exception as e:
             print(f"[ERROR] 检索失败: {str(e)}")
@@ -267,11 +267,11 @@ class RagRetriever(QObject):
 
     def retrieve_with_context(self, query: str, paper_id: str, top_k: int = 5) -> Tuple[str, Dict]:
         """
-        从指定论文的向量库中检索相关内容并保留其在原文中的结构
-        
+        从指定课本的向量库中检索相关内容并保留其在原文中的结构
+
         Args:
             query: 查询文本
-            paper_id: 论文ID
+            paper_id: 课本ID
             top_k: 返回结果数量
             
         Returns:
@@ -282,7 +282,7 @@ class RagRetriever(QObject):
             print("[WARNING] 向量库索引尚未加载完成，无法执行检索")
             return "", None
 
-        # 获取该论文的向量库
+        # 获取该课本的向量库
         vector_store = None
         
         # 检查是否已加载
@@ -297,14 +297,14 @@ class RagRetriever(QObject):
                     self.vector_stores[paper_id] = vector_store
         
         if not vector_store:
-            print(f"[WARNING] 未能获取论文 {paper_id} 的向量库")
+            print(f"[WARNING] 未能获取课本 {paper_id} 的向量库")
             return "", None
             
         try:
             # 加载rag_tree
             rag_tree = self.load_rag_tree(paper_id)
             if not rag_tree:
-                print(f"[WARNING] 未能加载论文 {paper_id} 的rag_tree")
+                print(f"[WARNING] 未能加载课本 {paper_id} 的rag_tree")
                 return "", None
                 
             # 移除重试机制，直接执行检索
@@ -369,7 +369,7 @@ class RagRetriever(QObject):
             sorted_paths = sorted(retrieved_sections.keys())
             
             # 构建最终结果字符串
-            result_parts = ["以下是论文中与您问题最相关的内容:"]
+            result_parts = ["以下是课本中与您问题最相关的内容:"]
 
             for path in sorted_paths:
                 node = retrieved_sections[path]

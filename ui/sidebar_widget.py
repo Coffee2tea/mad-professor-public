@@ -8,7 +8,7 @@ from ui.upload_widget import UploadWidget  # 导入上传文件窗口类
 class SidebarWidget(QWidget):
     """可折叠侧边栏"""
     # 定义信号
-    paper_selected = pyqtSignal(str)  # 论文选择信号，传递论文ID
+    paper_selected = pyqtSignal(str)  # 课本选择信号，传递课本ID
     upload_file = pyqtSignal(str)  # 上传文件信号，传递文件路径（转发）
     pause_processing = pyqtSignal()  # 暂停处理信号（转发）
     resume_processing = pyqtSignal()  # 继续处理信号（转发）
@@ -32,10 +32,10 @@ class SidebarWidget(QWidget):
         header_frame.setObjectName("sidebarHeader")
         header_frame.setStyleSheet("""
             #sidebarHeader {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                               stop:0 #1a237e, stop:1 #0d47a1);
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                               stop:0 #FFCC80, stop:1 #FF8A65);
                 color: white;
-                border-bottom: 1px solid #0a1855;
+                border-bottom: 1px solid rgba(255, 138, 101, 0.6);
             }
         """)
         header_frame.setFixedHeight(40)  # 固定高度与其他标题栏一致
@@ -44,7 +44,7 @@ class SidebarWidget(QWidget):
         header_layout.setContentsMargins(10, 0, 10, 0)
         
         title_font = QFont("Source Han Sans SC", 11, QFont.Weight.Bold)
-        self.title_label = QLabel("论文列表")
+        self.title_label = QLabel("法语课本")
         self.title_label.setFont(title_font)
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
         
@@ -77,25 +77,25 @@ class SidebarWidget(QWidget):
         header_layout.addWidget(self.title_label)
         header_layout.addWidget(button_container, 0, Qt.AlignmentFlag.AlignRight)
         
-        # 论文列表容器
+        # 课本列表容器
         list_container = QFrame()
         list_container.setObjectName("listContainer")
         list_container.setStyleSheet("""
             #listContainer {
-                background-color: #f0f4f8;
+                background-color: #FFF8E1;
             }
         """)
         list_layout = QVBoxLayout(list_container)
         list_layout.setContentsMargins(0, 0, 0, 0)
         
-        # 论文列表
+        # 课本列表
         self.paper_list = QListWidget()
         self.paper_list.setObjectName("paperList")
         self.paper_list.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.paper_list.setTextElideMode(Qt.TextElideMode.ElideRight)
         self.paper_list.setStyleSheet("""
             #paperList {
-                background-color: #f0f4f8;
+                background-color: #FFF8E1;
                 border: none;
                 outline: none;
             }
@@ -117,25 +117,25 @@ class SidebarWidget(QWidget):
             }
             QListWidget::item {
                 padding: 12px;
-                border-bottom: 1px solid #dbe2ef;
-                color: #2c3e50;
+                border-bottom: 1px solid rgba(255, 183, 77, 0.3);
+                color: #5D4037;
                 width: 100%;
             }
             QListWidget::item:selected {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                               stop:0 #1a237e, stop:1 #283593);
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                               stop:0 #FFB74D, stop:1 #FF8A65);
                 color: white;
-                border-radius: 6px;
-                margin: 2px 5px;
+                border-radius: 8px;
+                margin: 4px 5px;
             }
             QListWidget::item:hover:!selected {
-                background-color: #e3f2fd;
-                border-radius: 6px;
-                margin: 2px 5px;
+                background-color: rgba(255, 236, 179, 0.9);
+                border-radius: 8px;
+                margin: 4px 5px;
             }
         """)
         
-        # 连接论文列表点击信号
+        # 连接课本列表点击信号
         self.paper_list.itemClicked.connect(self.on_paper_item_clicked)
         
         list_layout.addWidget(self.paper_list)
@@ -197,7 +197,7 @@ class SidebarWidget(QWidget):
         self.min_anim.start()
     
     def load_papers(self, papers_index):
-        """加载论文索引到列表"""
+        """加载课本索引到列表"""
         self.paper_list.clear()
         for paper in papers_index:
             # 优先使用translated_title作为显示文本
@@ -207,10 +207,10 @@ class SidebarWidget(QWidget):
             self.paper_list.addItem(item)
     
     def on_paper_item_clicked(self, item):
-        """处理论文项点击事件，发出paper_selected信号"""
+        """处理课本项点击事件，发出paper_selected信号"""
         paper = item.data(Qt.ItemDataRole.UserRole)
         if paper:
-            # 发送论文选择信号
+            # 发送课本选择信号
             self.paper_selected.emit(paper.get('id'))
             
     def on_upload_file(self, file_path):
