@@ -4,18 +4,17 @@ import os
 from typing import List, Dict, Any, Generator, Tuple
 from config import LLMClient
 
-AI_CHARACTER_PROMPT_PATH = "prompt/ai_character_prompt_leidian.txt"
-AI_EXPLAIN_PROMPT_PATH = "prompt/ai_explain_prompt.txt"
-AI_ROUTER_PROMPT_PATH = "prompt/ai_router_prompt.txt"
+AI_CHARACTER_PROMPT_PATH = "prompt/ai_character_prompt_french_tutor.txt"
+AI_EXPLAIN_PROMPT_PATH = "prompt/ai_explain_prompt_french_tutor.txt"
+AI_ROUTER_PROMPT_PATH = "prompt/ai_router_prompt_french_tutor.txt"
 
 class AIProfessorChat:
     """
-    AI对话助手 - 学术论文智能问答系统
-    
-    支持多种回答策略：
+    AI对话助手 - 小学生法语课堂伙伴
+
+    支持的回答策略：
     - 直接回答
     - 页面内容分析
-    - 宏观检索（章节概要）
     - RAG检索（精准段落）
     """
     
@@ -30,13 +29,13 @@ class AIProfessorChat:
         # 对话历史 (保持最近10条)
         self.conversation_history = []
         
-        # 当前论文上下文
+        # 当前课本上下文
         self.current_paper_id = None
         self.current_paper_data = None
         
         # 将实例化改为引用初始化
         self.retriever = None  # 稍后由AI_manager设置
-        
+
         # LLM客户端
         self.llm_client = None
         try:
@@ -55,22 +54,22 @@ class AIProfessorChat:
             return ""
     
     def set_paper_context(self, paper_id: str, paper_data: Dict[str, Any]) -> bool:
-        """设置当前论文上下文
-        
+        """设置当前课本上下文
+
         Args:
-            paper_id: 论文ID
-            paper_data: 论文数据字典
-            
+            paper_id: 课本ID
+            paper_data: 课本数据字典
+
         Returns:
             bool: 成功返回True，失败返回False
         """
         try:
             self.current_paper_id = paper_id
             self.current_paper_data = paper_data
-            self.logger.info(f"已设置论文上下文: {paper_id}")
+            self.logger.info(f"已设置课本上下文: {paper_id}")
             return True
         except Exception as e:
-            self.logger.error(f"设置论文上下文失败: {str(e)}")
+            self.logger.error(f"设置课本上下文失败: {str(e)}")
             return False
     
     def process_query_stream(self, query: str, visible_content: str = None) -> Generator[Tuple[str, str, Dict], None, None]:
@@ -123,7 +122,7 @@ class AIProfessorChat:
             # 4. 根据策略执行不同的处理
             context_info = ""
             scroll_info = None  # 初始化滚动信息
-            
+
             if function_name == 'direct_answer':
                 # 直接回答，不需要额外信息
                 print("\n==== 直接回答模式 ====\n无需检索上下文")
@@ -134,11 +133,6 @@ class AIProfessorChat:
                 if visible_content:
                     context_info = f"以下是页面当前显示的内容:\n\n{visible_content}"
                     print(f"\n==== 页面内容分析 ====\n{context_info}")
-            
-            elif function_name == 'macro_retrieval':
-                # 宏观检索 - 获取章节概要
-                if self.current_paper_data:
-                    context_info = self._get_macro_context(optimized_query)  # 使用优化查询
             
             elif function_name == 'rag_retrieval':
                 # RAG检索 - 获取相关段落
@@ -217,13 +211,13 @@ class AIProfessorChat:
             return False
         
         # 确保emotion在有效范围内
-        valid_emotions = ["happy", "sad", "angry", "fearful", "disgusted", "surprised", "neutral"]
+        valid_emotions = ["happy", "surprised", "neutral"]
         if decision_data["emotion"] not in valid_emotions:
             self.logger.warning(f"无效的情绪类型: {decision_data['emotion']}")
             return False
-            
+
         # 确保function在有效范围内
-        valid_functions = ["direct_answer", "page_content_analysis", "macro_retrieval", "rag_retrieval"]
+        valid_functions = ["direct_answer", "page_content_analysis", "rag_retrieval"]
         if decision_data["function"] not in valid_functions:
             self.logger.warning(f"无效的功能类型: {decision_data['function']}")
             return False
@@ -250,15 +244,15 @@ class AIProfessorChat:
             # 1. 读取并准备决策提示词
             router_prompt = self._read_file(AI_ROUTER_PROMPT_PATH)
             
-            # 确定当前论文状态
+            # 确定当前课本状态
             has_paper_loaded = self.current_paper_id is not None and self.current_paper_data is not None
-            paper_status = "有论文加载" if has_paper_loaded else "无论文加载"
-            
-            # 获取当前论文标题（如果有）
-            paper_title = "无论文"
+            paper_status = "有课本加载" if has_paper_loaded else "无课本加载"
+
+            # 获取当前课本标题（如果有）
+            paper_title = "无课本"
             if has_paper_loaded:
                 paper_title = self.current_paper_data.get('translated_title', '') or self.current_paper_data.get('title', '')
-                paper_title = f"当前论文标题: {paper_title}"
+                paper_title = f"当前课本名称: {paper_title}"
             
             # 准备对话历史格式 - 不包括最新的用户查询
             formatted_history = ""
@@ -267,12 +261,12 @@ class AIProfessorChat:
                 recent_history = self.conversation_history[:-1][-4:]  # 最多取4条历史记录(不包括最新的)
                 history_items = []
                 for msg in recent_history:
-                    role = "用户" if msg["role"] == "user" else "暴躁教授"
+                    role = "学生" if msg["role"] == "user" else "Amélie"
                     content = msg["content"]
                     history_items.append(f"{role}: {content}")
                 formatted_history = "\n".join(history_items)
             
-            # 将论文状态、论文标题和对话历史添加到提示中
+            # 将课本状态、课本标题和对话历史添加到提示中
             decision_prompt = router_prompt.format(
                 query=query, 
                 paper_status=paper_status,
@@ -320,10 +314,10 @@ class AIProfessorChat:
                 except json.JSONDecodeError:
                     self.logger.warning("JSON解析失败，将重试")
             
-            # 4. 如果无论文加载，强制使用direct_answer
+            # 4. 如果无课本加载，强制使用direct_answer
             if not has_paper_loaded and decision_data and self._validate_decision(decision_data):
                 decision_data["function"] = "direct_answer"
-                self.logger.info("无论文加载，强制使用direct_answer策略")
+                self.logger.info("无课本加载，强制使用direct_answer策略")
             
             # 5. 返回决策结果：如果decision_data有效则使用它，否则使用默认值
             if decision_data and self._validate_decision(decision_data):
@@ -344,8 +338,8 @@ class AIProfessorChat:
         """获取宏观上下文 - 从章节概要中提取
         
         提取内容:
-        - 论文总标题(翻译或原始)
-        - 论文总摘要(如果存在)
+        - 课本总标题(翻译或原始)
+        - 课本总摘要(如果存在)
         - 第一级章节的标题和摘要(不递归处理子章节)
         
         Args:
@@ -366,7 +360,7 @@ class AIProfessorChat:
             if doc_title:
                 context_parts.append(f"# {doc_title}")
             
-            # 添加论文总摘要(如果存在)
+            # 添加课本总摘要(如果存在)
             if 'summary' in self.current_paper_data and self.current_paper_data['summary']:
                 context_parts.append(f"## 总摘要\n{self.current_paper_data['summary']}")
             
@@ -452,13 +446,13 @@ class AIProfessorChat:
         # 读取角色提示词和解释提示词
         character_prompt = self._read_file(AI_CHARACTER_PROMPT_PATH)
         explain_prompt = self._read_file(AI_EXPLAIN_PROMPT_PATH)
-        
-        # 添加论文标题到系统提示(如果有)
+
+        # 添加课本标题到系统提示(如果有)
         title = ""
         if self.current_paper_data:
             title = self.current_paper_data.get('translated_title', '') or self.current_paper_data.get('title', '')
         else:
-            title = "无论文"
+            title = "无课本"
 
         explain_prompt = explain_prompt.format(title=title)
         
@@ -478,15 +472,13 @@ class AIProfessorChat:
         if context_info:
             context_type = "参考信息"
             if function_name == "page_content_analysis":
-                context_type = "当前页面内容"
-            elif function_name == "macro_retrieval":
-                context_type = "论文概要"
+                context_type = "当前课本页面"
             elif function_name == "rag_retrieval":
-                context_type = "相关论文段落"
+                context_type = "课本知识点"
         
             final_query = f"{final_query}\n\n{context_type}:\n{context_info}"
         
-        final_query += f"{final_query}\n\n输出回复的话："
+        final_query += "\n\n输出回复的话："
         # 添加最终用户查询
         messages.append({"role": "user", "content": final_query})
         

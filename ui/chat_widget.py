@@ -25,7 +25,7 @@ class ChatWidget(QWidget):
         """初始化聊天组件"""
         super().__init__(parent)
         self.ai_controller = None  # AI控制器引用
-        self.paper_controller = None  # 论文控制器引用
+        self.paper_controller = None  # 课本控制器引用
         self.loading_bubble = None  # 加载动画引用
         self.is_voice_active = False  # 语音功能是否激活
         
@@ -54,7 +54,7 @@ class ChatWidget(QWidget):
         self.active_request_id = None
     
     def set_paper_controller(self, paper_controller):
-        """设置论文控制器引用"""
+        """设置课本控制器引用"""
         self.paper_controller = paper_controller
 
     # 修改set_markdown_view方法
@@ -92,10 +92,10 @@ class ChatWidget(QWidget):
         title_bar.setFixedHeight(40)
         title_bar.setStyleSheet("""
             #chatTitleBar {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                             stop:0 #1565C0, stop:1 #0D47A1);
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                             stop:0 #FFB74D, stop:1 #FF8A65);
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
                 color: white;
             }
         """)
@@ -105,8 +105,8 @@ class ChatWidget(QWidget):
         title_layout.setContentsMargins(15, 0, 15, 0)
         
         # 设置标题文本和字体
-        title_font = QFont("Source Han Sans SC", 11, QFont.Weight.Bold)
-        title_label = QLabel("你的导师")
+        title_font = QFont("Source Han Sans SC", 12, QFont.Weight.Bold)
+        title_label = QLabel("和Amélie一起练习")
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: white; font-weight: bold;")
         
@@ -126,12 +126,12 @@ class ChatWidget(QWidget):
         chat_container.setObjectName("chatContainer")
         chat_container.setStyleSheet("""
             #chatContainer {
-                background-color: #E8EAF6;
-                border-left: 1px solid #CFD8DC;
-                border-right: 1px solid #CFD8DC;
-                border-bottom: 1px solid #CFD8DC;
-                border-bottom-left-radius: 12px;
-                border-bottom-right-radius: 12px;
+                background-color: #FFF8E1;
+                border-left: 1px solid rgba(255, 183, 77, 0.4);
+                border-right: 1px solid rgba(255, 183, 77, 0.4);
+                border-bottom: 1px solid rgba(255, 183, 77, 0.4);
+                border-bottom-left-radius: 16px;
+                border-bottom-right-radius: 16px;
             }
         """)
         
@@ -165,8 +165,8 @@ class ChatWidget(QWidget):
         scroll_area.setStyleSheet("""
             QScrollArea {
                 background-color: #FFFFFF;
-                border: 1px solid #E0E0E0;
-                border-radius: 10px;
+                border: 1px solid rgba(255, 183, 77, 0.3);
+                border-radius: 12px;
             }
         """)
         
@@ -208,15 +208,15 @@ class ChatWidget(QWidget):
         
         # 创建文本输入框
         self.message_input = QTextEdit()
-        self.message_input.setPlaceholderText("输入您对导师的问题...")
+        self.message_input.setPlaceholderText("写下你想问Amélie的小问题或游戏指令...")
         self.message_input.setMaximumHeight(100)
         self.message_input.setObjectName("messageInput")
         self.message_input.setStyleSheet("""
             #messageInput {
                 border: none;
-                background-color: #F5F7FA;
-                border-radius: 8px;
-                padding: 10px;  /* 增加内边距 */
+                background-color: rgba(255, 248, 225, 0.8);
+                border-radius: 10px;
+                padding: 10px;
                 font-family: 'Source Han Sans SC', 'Segoe UI', sans-serif;
                 font-size: 13px;
             }
@@ -279,29 +279,29 @@ class ChatWidget(QWidget):
         # 优化样式：修复三角形和添加下拉列表圆角
         self.device_combo.setStyleSheet("""
             QComboBox {
-                border: 1px solid #C5CAE9;
-                border-radius: 5px;
+                border: 1px solid rgba(255, 183, 77, 0.6);
+                border-radius: 6px;
                 padding: 4px 10px 4px 8px;
                 background-color: white;
-                color: #303F9F;
+                color: #E65100;
                 font-size: 12px;
-                selection-background-color: #E8EAF6;
+                selection-background-color: rgba(255, 204, 128, 0.6);
             }
             QComboBox:hover {
-                border: 1px solid #7986CB;
-                background-color: #F5F7FA;
+                border: 1px solid rgba(255, 152, 0, 0.8);
+                background-color: rgba(255, 243, 224, 0.8);
             }
             QComboBox:focus {
-                border: 1px solid #3F51B5;
+                border: 1px solid #FF8A65;
             }
             QComboBox::drop-down {
                 subcontrol-origin: padding;
                 subcontrol-position: center right;
-                width: 16px;
-                border-left: 1px solid #C5CAE9;
-                border-top-right-radius: 4px;
-                border-bottom-right-radius: 4px;
-                background-color: #E8EAF6;
+                width: 18px;
+                border-left: 1px solid rgba(255, 183, 77, 0.4);
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+                background-color: rgba(255, 224, 178, 0.6);
             }
             QComboBox::down-arrow {
                 image: url(""" + get_asset_path("down_arrow.svg").replace("\\", "/") + """);
@@ -309,11 +309,11 @@ class ChatWidget(QWidget):
                 height: 10px;
             }
             QComboBox QAbstractItemView {
-                border: 1px solid #C5CAE9;
-                selection-background-color: #E8EAF6;
-                selection-color: #303F9F;
+                border: 1px solid rgba(255, 183, 77, 0.6);
+                selection-background-color: rgba(255, 224, 178, 0.8);
+                selection-color: #E65100;
                 background-color: white;
-                border-radius: 5px;
+                border-radius: 6px;
                 padding: 5px;
                 outline: none;
             }
@@ -341,13 +341,13 @@ class ChatWidget(QWidget):
         voice_button.setIconSize(QSize(16, 16))
         voice_button.setStyleSheet("""
             #voiceButton {
-                background-color: #E3F2FD;
-                border: 1px solid #BBDEFB;
+                background-color: rgba(255, 224, 178, 0.9);
+                border: 1px solid rgba(255, 183, 77, 0.6);
                 border-radius: 16px;
                 padding: 5px;
             }
             #voiceButton:hover {
-                background-color: #BBDEFB;
+                background-color: rgba(255, 204, 128, 0.9);
             }
         """)
         voice_button.clicked.connect(self.toggle_voice_chat)
@@ -370,21 +370,21 @@ class ChatWidget(QWidget):
         # 美化发送按钮
         send_button.setStyleSheet("""
             #sendButton {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                             stop:0 #303F9F, stop:1 #1A237E);
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                             stop:0 #FFB74D, stop:1 #FF8A65);
                 color: white;
                 border: none;
-                border-radius: 8px;
+                border-radius: 10px;
                 padding: 8px 20px;
                 font-weight: bold;
                 font-size: 14px;
             }
             #sendButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                             stop:0 #3949AB, stop:1 #303F9F);
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                             stop:0 #FFCC80, stop:1 #FF9E80);
             }
             #sendButton:pressed {
-                background: #1A237E;
+                background: #FF7043;
                 padding-left: 22px;
                 padding-top: 10px;
             }
@@ -445,7 +445,7 @@ class ChatWidget(QWidget):
                         # 更新message为合并后的问题
                         message = combined_question
             
-            # 获取当前论文ID，如果有的话
+        # 获取当前课本ID，如果有的话
             paper_id = None
             if self.paper_controller and self.paper_controller.current_paper:
                 paper_id = self.paper_controller.current_paper.get('id')

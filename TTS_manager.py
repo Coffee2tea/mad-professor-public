@@ -3,7 +3,7 @@ import queue
 import pyaudio
 import requests
 from PyQt6.QtCore import QThread, QObject, pyqtSignal, QMutex, QTimer
-from config import TTS_GROUP_ID, TTS_API_KEY
+from config import TTS_GROUP_ID, TTS_API_KEY, TTS_VOICE_ID
 
 url = "https://api.minimax.chat/v1/t2a_v2?GroupId=" + TTS_GROUP_ID
 headers = {"Content-Type": "application/json", "Authorization": "Bearer " + TTS_API_KEY}
@@ -199,10 +199,10 @@ class TTSManager(QObject):
             "text": text,
             "stream": True,
             "voice_setting": {
-                "voice_id": "leidianjiangjun",
-                "speed": 1,
+                "voice_id": TTS_VOICE_ID,
+                "speed": 1.05,
                 "vol": 1,
-                "pitch": 0,
+                "pitch": 2,
                 "emotion": mapped_emotion
             },
             "audio_setting": {

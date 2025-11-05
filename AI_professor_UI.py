@@ -13,10 +13,10 @@ from AI_manager import AIManager
 
 class AIProfessorUI(QMainWindow):
     """
-    主窗口类 - 学术论文AI助手的主界面
-    
+    主窗口类 - 法语学习小伙伴的主界面
+
     负责创建和管理整个应用的UI布局、样式和交互逻辑，
-    包括侧边栏、文档查看区和AI聊天区
+    包括侧边栏、课本查看区和AI聊天区
     """
     def __init__(self):
         """初始化主窗口及所有子组件"""
@@ -38,29 +38,29 @@ class AIProfessorUI(QMainWindow):
         # 连接数据管理器信号
         self.connect_signals()
         
-        # 加载论文数据
+        # 加载课本数据
         self.data_manager.load_papers_index()
-        
+
         # 显示欢迎信息
         self.show_welcome_message()
-        
-        # 在后台预加载所有论文向量库
+
+        # 在后台预加载所有课本向量库
         self.ai_manager.init_rag_retriever("output")
 
     def init_window_properties(self):
         """初始化窗口属性：大小、图标、状态栏和窗口风格"""
         # 设置窗口标题和初始大小
-        self.setWindowTitle("暴躁的教授读论文")
+        self.setWindowTitle("Bonjour! 法语小伙伴")
         self.setGeometry(100, 100, 1400, 900)
-        
+
         # 添加状态栏
-        self.statusBar().showMessage("就绪")
+        self.statusBar().showMessage("准备好和Amélie一起冒险学法语啦！")
         self.statusBar().setStyleSheet("""
             QStatusBar {
-                background-color: #303F9F;
-                color: white;
+                background-color: #FFB74D;
+                color: #4E342E;
                 padding: 2px;
-                font-size: 11px;
+                font-size: 12px;
             }
         """)
         
@@ -73,7 +73,7 @@ class AIProfessorUI(QMainWindow):
         # 设置窗口样式
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #E8EAF6;
+                background-color: #FFF3E0;
             }
         """)
 
@@ -90,8 +90,8 @@ class AIProfessorUI(QMainWindow):
         self.titlebar.setFixedHeight(30)
         self.titlebar.setStyleSheet("""
             #customTitleBar {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                             stop:0 #0D47A1, stop:0.5 #1A237E, stop:1 #0D47A1);
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                             stop:0 #FF8A65, stop:0.5 #FF7043, stop:1 #FF8A65);
                 color: white;
             }
         """)
@@ -107,7 +107,7 @@ class AIProfessorUI(QMainWindow):
         app_icon.setPixmap(self.windowIcon().pixmap(16, 16))
         
         # 设置应用标题
-        app_title = QLabel("暴躁的教授读论文")
+        app_title = QLabel("Bonjour! 法语小伙伴")
         app_title.setStyleSheet("color: white; font-weight: bold;")
         
         # 创建窗口控制按钮
@@ -144,7 +144,7 @@ class AIProfessorUI(QMainWindow):
                 border-radius: 4px;
             }
             QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.2);
+                background-color: rgba(255, 255, 255, 0.25);
             }
         """
         
@@ -218,8 +218,8 @@ class AIProfessorUI(QMainWindow):
         初始化UI组件和布局
         
         创建应用的主要UI组件，包括:
-        - 侧边栏：用于显示和选择论文
-        - 文档查看区：显示论文内容，支持中英文切换
+        - 侧边栏：用于显示和选择课本
+        - 文档查看区：显示课本内容，支持中法双语切换
         - 聊天区域：用于与AI助手交互
         """
         # 设置中心部件和主布局
@@ -366,24 +366,24 @@ class AIProfessorUI(QMainWindow):
         
         # 工具栏标题
         title_font = QFont("Source Han Sans SC", 11, QFont.Weight.Bold)
-        doc_title = QLabel("论文阅读")
+        doc_title = QLabel("课本阅读")
         doc_title.setFont(title_font)
         doc_title.setStyleSheet("color: white; font-weight: bold;")
         
         # 语言切换按钮
-        self.lang_button = QPushButton("切换为英文")
+        self.lang_button = QPushButton("切换为法语")
         self.lang_button.setObjectName("langButton")
         self.lang_button.setStyleSheet("""
             #langButton {
-                background-color: rgba(255, 255, 255, 0.2);
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.3);
+                background-color: rgba(255, 255, 255, 0.35);
+                color: #BF360C;
+                border: 1px solid rgba(255, 138, 101, 0.5);
                 border-radius: 8px;
                 padding: 5px 15px;
                 font-weight: bold;
             }
             #langButton:hover {
-                background-color: rgba(255, 255, 255, 0.3);
+                background-color: rgba(255, 255, 255, 0.55);
             }
         """)
         self.lang_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -399,21 +399,21 @@ class AIProfessorUI(QMainWindow):
         """应用全局样式，主要用于统一滚动条风格"""
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #E8EAF6;
+                background-color: #FFF3E0;
             }
             QScrollBar:vertical {
                 border: none;
-                background: #F5F5F5;
+                background: rgba(255, 224, 178, 0.6);
                 width: 8px;
                 border-radius: 4px;
             }
             QScrollBar::handle:vertical {
-                background: #C5CAE9;
+                background: rgba(255, 183, 77, 0.8);
                 min-height: 20px;
                 border-radius: 4px;
             }
             QScrollBar::handle:vertical:hover {
-                background: #7986CB;
+                background: rgba(255, 138, 101, 0.8);
             }
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
                 height: 0px;
@@ -430,16 +430,14 @@ class AIProfessorUI(QMainWindow):
         self.sidebar.pause_processing.connect(self.data_manager.pause_processing)
         self.sidebar.resume_processing.connect(self.data_manager.resume_processing)
 
-        # 连接数据管理器的论文数据信号
+        # 连接数据管理器的课本相关信号
         self.sidebar.resume_processing.connect(self.data_manager.resume_processing)
-
-        # 连接数据管理器的论文数据信号
         self.data_manager.papers_loaded.connect(self.on_papers_loaded)  # 这是关键连接
         self.data_manager.paper_content_loaded.connect(self.on_paper_content_loaded)
         self.data_manager.loading_error.connect(self.on_loading_error)
         self.data_manager.message.connect(self.on_message)
         
-        # 连接侧边栏的论文选择信号
+        # 连接侧边栏的课本选择信号
         self.sidebar.paper_selected.connect(self.on_paper_selected)
 
         # 连接处理进度信号
@@ -453,31 +451,31 @@ class AIProfessorUI(QMainWindow):
 
     def on_papers_loaded(self, papers):
         """
-        处理论文列表加载完成的信号
-        
+        处理课本列表加载完成的信号
+
         Args:
-            papers: 论文数据列表
+            papers: 课本数据列表
         """
         self.sidebar.load_papers(papers)
-        
+
     def on_paper_selected(self, paper_id):
         """
-        处理论文选择事件
-        
-        当用户在侧边栏选择一篇论文时，通知数据管理器加载相应内容
-        
+        处理课本选择事件
+
+        当用户在侧边栏选择一本课本时，通知数据管理器加载相应内容
+
         Args:
-            paper_id: 选择的论文ID
+            paper_id: 选择的课本ID
         """
-        # 通知数据管理器加载选定的论文
+        # 通知数据管理器加载选定的课本
         self.data_manager.load_paper_content(paper_id)
 
     def on_paper_content_loaded(self, paper, zh_content, en_content):
         """
-        处理论文内容加载完成的信号
-        
+        处理课本内容加载完成的信号
+
         Args:
-            paper: 论文数据字典
+            paper: 课本数据字典
             zh_content: 中文内容
             en_content: 英文内容
         """
@@ -487,27 +485,27 @@ class AIProfessorUI(QMainWindow):
         self.md_view.set_language("zh")  # 默认显示中文
         
         # 更新语言按钮文本
-        self.lang_button.setText("切换为英文")
+        self.lang_button.setText("切换为法语")
         self.lang_button.setStyleSheet("""
             #langButton {
-                background-color: rgba(255, 255, 255, 0.2);
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.3);
+                background-color: rgba(255, 255, 255, 0.35);
+                color: #BF360C;
+                border: 1px solid rgba(255, 138, 101, 0.5);
                 border-radius: 8px;
                 padding: 5px 15px;
                 font-weight: bold;
             }
             #langButton:hover {
-                background-color: rgba(255, 255, 255, 0.3);
+                background-color: rgba(255, 255, 255, 0.55);
             }
         """)
         
         # 更新状态栏
         title = paper.get('translated_title', '') or paper.get('title', '')
-        self.statusBar().showMessage(f"已加载论文: {title}")
-        
-        # 向AI助手发送论文加载通知
-        self.chat_widget.receive_ai_message(f"已加载论文「{title}」")
+        self.statusBar().showMessage(f"已加载课本: {title}")
+
+        # 向AI助手发送课本加载通知
+        self.chat_widget.receive_ai_message(f"已加载课本「{title}」")
 
     def on_loading_error(self, error_message):
         """
@@ -534,24 +532,24 @@ class AIProfessorUI(QMainWindow):
     def show_welcome_message(self):
         """显示欢迎信息"""
         welcome_md = """
-# 哼！又来一个不读论文的学生是吧？
+# Bonjour！我是阳光老师Amélie
 
-很好，至少你知道打开这个软件。我是你的论文指导教授，**不要期望我对你手下留情**。
+欢迎来到我们的法语魔法教室！这里的每一本课本都会变成闪闪发亮的冒险故事。
 
-## 听好了，这是你能做的事：
+## 我们可以一起做的事
 
-- **选论文**：左边那一堆，挑一篇你能看懂的（如果有的话）
-- **换语言**：中英文看不懂？按上面那个按钮切换，别指望换了语言就能理解内容
-- **问问题**：有不懂的就右边提问，我会回答，虽然你的问题可能很蠢
-- **看摘要**：懒得读全文？我给你总结重点，省得你到处抓瞎
+- **挑一节课**：左边的课程列表里有不同的主题，点一点就能进入冒险。
+- **切换语言**：想看中文解释还是法语原句？上方按钮随时切换，让学习更轻松。
+- **提问聊天**：右边和我对话吧！任何单词、句子或生活场景都可以问我。
+- **跟着语音学**：我会用卡通声音读法语，你可以跟着练习发音哦。
 
-## 开始用吧，别磨蹭！
+## 小贴士
 
-从左边随便选一篇，然后开始读。有不明白的就问我，**别憋着装懂**！
+1. 先选课，再聊天，我会把课本内容准备好。
+2. 说“我们来玩个游戏”试试，我会给你小游戏任务。
+3. 完成任务后记得告诉我，我有彩虹贴纸要送给勇敢的你！
 
-记住：_真正的学术是刀尖起舞，而不是像你平时那样浅尝辄止！_
-
-...不过别担心，我会一直在这陪你读完的。
+准备好了吗？按下你的第一节课，我们马上出发！
 """
         self.md_view.load_markdown(welcome_md)
 
@@ -565,33 +563,33 @@ class AIProfessorUI(QMainWindow):
         
         # 设置按钮文本和样式
         if lang == "zh":
-            btn_text = "切换为英文"
+            btn_text = "切换为法语"
             self.lang_button.setStyleSheet("""
                 #langButton {
-                    background-color: rgba(255, 255, 255, 0.2);
-                    color: white;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 255, 255, 0.35);
+                    color: #BF360C;
+                    border: 1px solid rgba(255, 138, 101, 0.5);
                     border-radius: 8px;
                     padding: 5px 15px;
                     font-weight: bold;
                 }
                 #langButton:hover {
-                    background-color: rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 255, 255, 0.55);
                 }
             """)
         else:
             btn_text = "切换为中文"
             self.lang_button.setStyleSheet("""
                 #langButton {
-                    background-color: rgba(65, 105, 225, 0.3);
-                    color: white;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 183, 77, 0.35);
+                    color: #4E342E;
+                    border: 1px solid rgba(255, 152, 0, 0.5);
                     border-radius: 8px;
                     padding: 5px 15px;
                     font-weight: bold;
                 }
                 #langButton:hover {
-                    background-color: rgba(65, 105, 225, 0.4);
+                    background-color: rgba(255, 183, 77, 0.55);
                 }
             """)
             
@@ -600,9 +598,9 @@ class AIProfessorUI(QMainWindow):
         # 更新状态栏
         current_paper = self.data_manager.current_paper
         if current_paper:
-            language_text = "英文" if lang == "en" else "中文"
+            language_text = "法语" if lang == "en" else "中文"
             title = current_paper.get('title' if lang == "en" else 'translated_title', '')
-            self.statusBar().showMessage(f"已切换到{language_text}版本: {title}")
+            self.statusBar().showMessage(f"现在我们在看{language_text}故事：《{title}》")
 
     def on_processing_progress(self, file_name, stage, progress, remaining):
         self.sidebar.update_upload_status(file_name, stage, progress, remaining)
@@ -611,7 +609,7 @@ class AIProfessorUI(QMainWindow):
         self.data_manager.load_papers_index()
         
     def on_processing_error(self, paper_id, error_msg):
-        self.statusBar().showMessage(f"处理论文出错: {error_msg}")
+        self.statusBar().showMessage(f"处理课本出错: {error_msg}")
         
     def on_queue_updated(self, queue):
         """处理队列更新回调"""

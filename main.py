@@ -18,9 +18,9 @@ def generate_app_icon():
     
     # 创建渐变背景
     gradient = QLinearGradient(0, 0, icon_size, icon_size)
-    gradient.setColorAt(0, QColor(13, 71, 161))  # 深蓝色 #0D47A1
-    gradient.setColorAt(0.5, QColor(26, 35, 126))  # 深靛蓝 #1A237E
-    gradient.setColorAt(1, QColor(13, 71, 161))  # 深蓝色 #0D47A1
+    gradient.setColorAt(0, QColor(255, 183, 77))
+    gradient.setColorAt(0.5, QColor(255, 138, 101))
+    gradient.setColorAt(1, QColor(255, 183, 77))
     
     # 绘制圆形背景
     painter.setBrush(QBrush(gradient))
@@ -47,8 +47,8 @@ def generate_app_icon():
     
     # 绘制AI图标（简化的"AI"文字）
     painter.setFont(QFont("Arial", 14, QFont.Weight.Bold))
-    painter.setPen(QColor(26, 35, 126))  # 深靛蓝色
-    painter.drawText(QRect(20, 20, 20, 20), Qt.AlignmentFlag.AlignCenter, "AI")
+    painter.setPen(QColor(255, 87, 34))
+    painter.drawText(QRect(20, 20, 20, 20), Qt.AlignmentFlag.AlignCenter, "FR")
     
     # 结束绘制
     painter.end()
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     # 如果是Windows系统，设置任务栏图标ID
     if sys.platform == "win32":
         import ctypes
-        app_id = 'ai.professor.paperassistant.1.0'  # 应用程序唯一标识符
+        app_id = 'amelie.frenchbuddy.1.0'  # 应用程序唯一标识符
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
     
     # 注册字体
@@ -93,18 +93,18 @@ if __name__ == '__main__':
     
     # 设置应用程序级别的调色板，使界面更加现代
     palette = QPalette()
-    palette.setColor(QPalette.ColorRole.Window, QColor(240, 240, 240))
-    palette.setColor(QPalette.ColorRole.WindowText, QColor(51, 51, 51))
+    palette.setColor(QPalette.ColorRole.Window, QColor(255, 243, 224))
+    palette.setColor(QPalette.ColorRole.WindowText, QColor(78, 52, 46))
     palette.setColor(QPalette.ColorRole.Base, QColor(255, 255, 255))
-    palette.setColor(QPalette.ColorRole.AlternateBase, QColor(245, 245, 245))
+    palette.setColor(QPalette.ColorRole.AlternateBase, QColor(255, 248, 225))
     palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(255, 255, 255))
-    palette.setColor(QPalette.ColorRole.ToolTipText, QColor(51, 51, 51))
-    palette.setColor(QPalette.ColorRole.Text, QColor(51, 51, 51))
-    palette.setColor(QPalette.ColorRole.Button, QColor(240, 240, 240))
-    palette.setColor(QPalette.ColorRole.ButtonText, QColor(51, 51, 51))
-    palette.setColor(QPalette.ColorRole.Link, QColor(42, 130, 218))
-    palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
-    palette.setColor(QPalette.ColorRole.HighlightedText, QColor(255, 255, 255))
+    palette.setColor(QPalette.ColorRole.ToolTipText, QColor(78, 52, 46))
+    palette.setColor(QPalette.ColorRole.Text, QColor(78, 52, 46))
+    palette.setColor(QPalette.ColorRole.Button, QColor(255, 236, 179))
+    palette.setColor(QPalette.ColorRole.ButtonText, QColor(121, 85, 72))
+    palette.setColor(QPalette.ColorRole.Link, QColor(255, 112, 67))
+    palette.setColor(QPalette.ColorRole.Highlight, QColor(255, 183, 77))
+    palette.setColor(QPalette.ColorRole.HighlightedText, QColor(78, 52, 46))
     
     app.setPalette(palette)
     
