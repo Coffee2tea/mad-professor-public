@@ -12,3 +12,5 @@ pymdown-extensions
 zhconv
 RealtimeSTT
 pyaudio
+fastapi
+uvicorn
