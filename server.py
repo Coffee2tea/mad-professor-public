@@ -207,11 +207,16 @@ async def root():
             <h2>Ask</h2>
             <form id="askForm">
               <label>Your question</label>
-              <input type="text" name="question" placeholder="Ask about the document..." required />
-              <div style="margin-top:10px;">
+              <input type="text" name="question" id="questionInput" placeholder="Ask about the document..." required />
+              <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                 <button type="submit">Ask</button>
+                <button type="button" id="micBtn" class="secondary">🎤 Start Voice</button>
+                <label style="display:flex; align-items:center; gap:6px; font-size:0.95rem;">
+                  <input type="checkbox" id="speakToggle" /> Speak replies
+                </label>
                 <span id="askStatus" class="status"></span>
               </div>
+              <div id="voiceStatus" class="status"></div>
             </form>
           </div>
         </div>
@@ -223,11 +228,18 @@ async def root():
       <script>
         const uploadForm = document.getElementById('uploadForm');
         const askForm = document.getElementById('askForm');
+        const questionInput = document.getElementById('questionInput');
         const docStatus = document.getElementById('docStatus');
         const askStatus = document.getElementById('askStatus');
+        const voiceStatus = document.getElementById('voiceStatus');
         const chat = document.getElementById('chat');
+        const micBtn = document.getElementById('micBtn');
+        const speakToggle = document.getElementById('speakToggle');
 
         const history = [];
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognizer = null;
+        let listening = false;
 
         function addMessage(role, text, sources=[]) {
           const div = document.createElement('div');
@@ -252,6 +264,34 @@ async def root():
           docStatus.textContent = data.message || 'Saved';
         });
 
+        micBtn.addEventListener('click', () => {
+          if (!SpeechRecognition) {
+            voiceStatus.textContent = 'Voice not supported in this browser.';
+            return;
+          }
+          if (!recognizer) {
+            recognizer = new SpeechRecognition();
+            recognizer.continuous = false;
+            recognizer.interimResults = true;
+            recognizer.lang = 'en-US';
+            recognizer.onstart = () => { listening = true; micBtn.textContent = '🛑 Stop'; voiceStatus.textContent = 'Listening...'; };
+            recognizer.onend = () => { listening = false; micBtn.textContent = '🎤 Start Voice'; if (!questionInput.value) voiceStatus.textContent = ''; };
+            recognizer.onerror = () => { listening = false; micBtn.textContent = '🎤 Start Voice'; voiceStatus.textContent = 'Voice error'; };
+            recognizer.onresult = (e) => {
+              let transcript = '';
+              for (let i = e.resultIndex; i < e.results.length; i++) {
+                transcript += e.results[i][0].transcript;
+              }
+              questionInput.value = transcript.trim();
+            };
+          }
+          if (listening) {
+            recognizer.stop();
+          } else {
+            recognizer.start();
+          }
+        });
+
         askForm.addEventListener('submit', async (e) => {
           e.preventDefault();
           const formData = new FormData(askForm);
@@ -262,7 +302,16 @@ async def root():
           const data = await res.json();
           askStatus.textContent = data.message || '';
           addMessage('bot', data.answer || '(no answer)', data.sources || []);
+          if (speakToggle.checked && 'speechSynthesis' in window && data.answer) {
+            const utter = new SpeechSynthesisUtterance(data.answer);
+            utter.rate = 1.0;
+            utter.pitch = 1.0;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utter);
+          }
           askForm.reset();
+          questionInput.value = '';
+          voiceStatus.textContent = '';
         });
       </script>
     </body>
