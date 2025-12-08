@@ -8,6 +8,10 @@ app = FastAPI()
 async def root():
     return 'mad-professor: service is running'
 
+@app.get('/health', response_class=PlainTextResponse)
+async def health():
+    return 'ok'
+
 def get_port() -> int:
     try:
         return int(os.getenv('PORT', '8000'))
