@@ -93,3 +93,18 @@ mad-professor-public/
 - [MiniMax 语音克隆](https://platform.minimaxi.com/document/Voice%20Cloning?key=66719032a427f0c8a570165b)
 
 欢迎在此基础上继续打造更多课堂玩法，让更多孩子快乐学外语！
+
+
+## 云上快速运行（推荐）
+1. 复制环境变量：
+   ```bash
+   cp .env.example .env
+   ```
+2. 填写 `.env` 中的 `OPENAI_API_KEY`。
+3. 启动服务（含 API、Redis、Postgres）：
+   ```bash
+   docker compose -f docker-compose.cloud.yml up --build
+   ```
+4. 打开浏览器访问：`http://localhost:8000`
+
+> 说明：当前 `server.py` 已可作为 Web API + 页面入口运行；`docker-compose.cloud.yml` 提供了云上常见依赖的基线编排。
